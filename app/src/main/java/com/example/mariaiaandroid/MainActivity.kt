@@ -5,16 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.mariaiaandroid.singleton.ViewModel.TextFieldState
 import com.example.mariaiaandroid.ui.theme.MariaIaAndroidTheme
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
@@ -39,11 +45,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     MyForm(
                         name = "Gemini",
-                        modifier = Modifier.padding(innerPadding),
-                        value = "teste",
-                        trial = { input ->
-                            print(input)
-                        }
+                        modifier = Modifier.padding(innerPadding)
                     )
                 }
             }
@@ -55,27 +57,26 @@ class MainActivity : ComponentActivity() {
 fun MyForm(
     name: String,
     modifier: Modifier = Modifier,
-    value: String,
-    onValueChanged: (String) -> Unit
+    value: TextFieldState = remember { TextFieldState() },
 ) {
-    val initialValue = rememberUpdatedState(value)
-
     Column {
         Text(
             text = name,
-            modifier = modifier
+            modifier = modifier.padding(start = 10.dp, top = 40.dp)
         )
 
         TextField(
-            value = initialValue.value,
-            onValueChange = { initialValue.value = it },
-            placeholder = { Text("Insira Algo") }
+            value = value.text,
+            onValueChange = { value.text = it },
+            placeholder = { Text("Insira Algo") },
+            modifier = modifier
         )
 
-        Button(onClick = { /*TODO*/ }) {
+        Button(
+            onClick = { }, modifier = modifier
+        ) {
             Text(
-                text = "Enviar",
-                modifier = modifier
+                text = "Enviar"
             )
         }
     }
@@ -86,7 +87,6 @@ fun MyForm(
 @Composable
 fun MyFormPreview() {
     MariaIaAndroidTheme {
-        MyForm("Insira Algo", Modifier.fillMaxSize()) { input -> print(input) }
-
+        MyForm("Gemini")
     }
 }
