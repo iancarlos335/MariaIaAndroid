@@ -8,8 +8,8 @@ espressoCore = "3.5.1"
 lifecycleRuntimeKtx = "2.7.0"
 lifecycleViewmodelCompose = "2.7.0"
 activityCompose = "1.8.2"
-composeBom = "2023.08.00"
-generativeai = "0.1.1"
+composeBom = "2024.01.00"
+generativeai = "0.1.2"
 googleAndroidLibrariesMapsplatformSecretsGradlePlugin = "2.0.1"
 
 [libraries]

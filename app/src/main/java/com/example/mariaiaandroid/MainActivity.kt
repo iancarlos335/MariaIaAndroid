@@ -5,22 +5,26 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mariaiaandroid.singleton.ViewModel.TextFieldState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mariaiaandroid.singleton.vm.FormBlockViewModel
+import com.example.mariaiaandroid.ui.state.FormBlockUiState
 import com.example.mariaiaandroid.ui.theme.MariaIaAndroidTheme
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.generationConfig
@@ -37,16 +41,16 @@ class MainActivity : ComponentActivity() {
             modelName = "gemini-pro",
             apiKey = BuildConfig.apiKey,
             generationConfig = config
-
         )
+
 
         setContent {
             MariaIaAndroidTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MyForm(
-                        name = "Gemini",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                Surface(modifier = Modifier.fillMaxSize()) {
+                    FormBlockScreen()
+
+                    val viewModel = FormBlockViewModel(generativeModel)
+                    FormBlockRoute(viewModel)
                 }
             }
         }
@@ -54,26 +58,43 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyForm(
-    name: String,
-    modifier: Modifier = Modifier,
-    value: TextFieldState = remember { TextFieldState() },
+internal fun FormBlockRoute(
+    formBlockViewModel: FormBlockViewModel = viewModel()
 ) {
-    Column {
+    val formBlockUiState by formBlockViewModel.uiState.collectAsState()
+
+    FormBlockScreen(formBlockUiState, onSummarizeClicked = { inputText ->
+        formBlockViewModel.sending(inputText)
+    })
+
+}
+
+@Composable
+fun FormBlockScreen(
+    uiState: FormBlockUiState = FormBlockUiState.Initial,
+    onSummarizeClicked: (String) -> Unit = {}
+) {
+    var value by remember { mutableStateOf("") }
+
+    Column(
+        modifier = Modifier
+            .padding(top = 50.dp, start = 10.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         Text(
-            text = name,
-            modifier = modifier.padding(start = 10.dp, top = 40.dp)
+            text = "Maria IA",
+            modifier = Modifier
         )
 
         TextField(
-            value = value.text,
-            onValueChange = { value.text = it },
+            value = value,
+            onValueChange = { value = it },
             placeholder = { Text("Insira Algo") },
-            modifier = modifier
+            modifier = Modifier
         )
 
         Button(
-            onClick = { }, modifier = modifier
+            onClick = { }, modifier = Modifier
         ) {
             Text(
                 text = "Enviar"
@@ -83,10 +104,11 @@ fun MyForm(
 
 }
 
-@Preview(showBackground = true)
+
 @Composable
-fun MyFormPreview() {
+@Preview(showSystemUi = true)
+fun FormBlockPreview() {
     MariaIaAndroidTheme {
-        MyForm("Gemini")
+        FormBlockScreen()
     }
 }
