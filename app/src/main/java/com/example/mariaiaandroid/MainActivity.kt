@@ -16,6 +16,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -51,11 +52,12 @@ class MainActivity : ComponentActivity() {
             generationConfig = config
         )
 
-
         setContent {
             MariaIaAndroidTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    FormBlockScreen()
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background,
+                ) {
 
                     val viewModel = FormBlockViewModel(generativeModel)
                     FormBlockRoute(viewModel)
@@ -74,7 +76,6 @@ internal fun FormBlockRoute(
     FormBlockScreen(formBlockUiState, onSummarizeClicked = { inputText ->
         formBlockViewModel.sending(inputText)
     })
-
 }
 
 @Composable
