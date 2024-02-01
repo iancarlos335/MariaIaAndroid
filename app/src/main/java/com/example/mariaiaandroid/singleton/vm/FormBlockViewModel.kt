@@ -25,12 +25,12 @@ class FormBlockViewModel(
 
         viewModelScope.launch {
             try {
-                val response = generativeModel.generateContent(prompt)
+                val response = generativeModel.generateContent(prompt) //TODO try a chat Response other time
                 response.text?.let { outputContent ->
                     _uiState.value = FormBlockUiState.Sucess(outputContent)
                 }
             } catch (e: Exception) {
-                _uiState.value = FormBlockUiState.Error("Erro: ${e.localizedMessage}")
+                _uiState.value = FormBlockUiState.Error("Error: ${e.localizedMessage}")
             }
         }
 
